@@ -2,10 +2,39 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>P</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
+    <h1>данные с сервера</h1>
+    <div id="data-container"></div>
 
-   
+    <script>
+        async function fetchData() {
+            try {
+                const response = await fetch('/get');
+                const data = await response.json(); 
+                const container = document.getElementById('data-container');
+                
+                if (data.length === 0) {
+                    container.innerHTML = `<p>список пользователей пуст</p>`;
+                } else {
+                    data.forEach(user => {
+                        const userDiv = document.createElement('div');
+                        userDiv.className = 'user-data';
+                        userDiv.innerHTML = `
+                            <p>ID:${user.id}</p>
+                            <p>Name: ${user.name}</p>
+                            <hr>
+                        `;
+                        container.appendChild(userDiv);
+                    });
+                }
+            } catch (error) {
+                const container = document.getElementById('data-container');
+                container.innerHTML = `<p class="error">error: ${error.message}</p>`;
+            }
+        }
+        fetchData();
+    </script>
 </body>
 </html>

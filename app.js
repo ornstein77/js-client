@@ -13,14 +13,19 @@ const prisma = new PrismaClient({ adapter });
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(__dirname));
 
-
-app.use(cors()); 
-app.use(express.json());
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
 
 app.get('/get', async (req, res) => {
-  const user = await prisma.user.findFirst();
-  res.json(user || { message: "Пользователей пока нет" });
+  try {
+    const users = await prisma.user.findMany();
+    res.json(users); 
+  } catch (error) {
+    res.status(400).json({ error: "error" });
+  }
 });
 
 app.post('/create', async (req, res) => {
@@ -31,7 +36,7 @@ app.post('/create', async (req, res) => {
     });
     res.json(newUser);
   } catch (error) {
-    res.status(500).json({ error: "Не удалось создать пользователя" });
+    res.status(400).json({ error: "error" });
   }
 });
 
