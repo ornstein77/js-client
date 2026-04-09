@@ -1,0 +1,49 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:16.4
+    ports:
+      - "5432:5432"
+    volumes:
+      - database:/var/lib/postgresql/data
+    env_file:
+      - .postgres.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d testbase"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      - app-network
+  adminer:
+    container_name: adminer
+    image: adminer:latest
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+  server:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    env_file:
+      - ./backend/.env
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - DATABASE_URL=postgresql://admin:123123@postgres:5432/testbase?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: always
+networks:
+  app-network:
+    name: app-network
+volumes:
+  database:

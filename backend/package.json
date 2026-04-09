@@ -1,0 +1,30 @@
+{
+  "name": "server",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --env-file=.env --watch run index.ts",
+    "build:client": "bun run --cwd ../client build",
+    "build:server": "bun build index.ts --outdir ./dist --target bun",
+    "build:copy-client": "bun run ./scripts/copy-client.mjs",
+    "build": "bun run build:client && bun run build:server && bun run build:copy-client",
+    "start": "bun --env-file=.env run dist/index.js"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "latest",
+    "@prisma/client": "latest",
+    "cors": "latest",
+    "dotenv": "latest",
+    "express": "latest",
+    "pg": "latest"
+  
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/cors": "latest",
+    "@types/express": "latest",
+    "@types/pg": "latest",
+    "prisma": "latest",
+    "typescript": "latest"
+  }
+}
