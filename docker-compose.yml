@@ -24,10 +24,24 @@ services:
       - "8080:8080"
     networks:
       - app-network
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    depends_on:
+      - server
+    networks:
+      - app-network
+    restart: always
   server:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     env_file:
       - ./backend/.env
     ports:

@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.html",
   "scripts": {
-    "build": "bun run build.mjs"
+    "build": "bun run build.mjs",
+    "start": "bun run server.ts"
   },
   "keywords": [],
   "author": "",
