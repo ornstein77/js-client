@@ -47,8 +47,38 @@ app.get("/get", async (_req: Request, res: Response) => {
   }
 });
 
+app.get("/api/get", async (_req: Request, res: Response) => {
+  try {
+    const users = await prisma.user.findMany();
+    res.json(users);
+  } catch (error) {
+    console.error("Failed to fetch users:", error);
+    res.status(500).json({ error: "failed_to_fetch_users" });
+  }
+});
+
 app.post(
   "/create",
+  async (req: Request<Record<string, never>, unknown, CreateUserBody>, res: Response) => {
+    const { name } = req.body;
+    if (!name || !name.trim()) {
+      return res.status(400).json({ error: "name_is_required" });
+    }
+
+    try {
+      const newUser = await prisma.user.create({
+        data: { name: name.trim() },
+      });
+      return res.json(newUser);
+    } catch (error) {
+      console.error("Failed to create user:", error);
+      return res.status(500).json({ error: "failed_to_create_user" });
+    }
+  }
+);
+
+app.post(
+  "/api/create",
   async (req: Request<Record<string, never>, unknown, CreateUserBody>, res: Response) => {
     const { name } = req.body;
     if (!name || !name.trim()) {

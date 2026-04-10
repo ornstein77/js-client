@@ -1,16 +1,10 @@
 FROM oven/bun:latest AS base
 WORKDIR /app
 
-# У серверного образа build context должен быть корнем репозитория,
-# чтобы внутри был и backend, и client (backend собирает клиент и копирует в dist/public).
+COPY package*.json .
+RUN bun install
 
-COPY backend/package*.json ./backend/
-RUN bun install --cwd ./backend
-
-COPY backend ./backend
-COPY client ./client
-
-WORKDIR /app/backend
+COPY . .
 RUN bunx prisma generate
 
 RUN bun run build
